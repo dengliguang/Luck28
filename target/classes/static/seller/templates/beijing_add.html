@@ -1,0 +1,33 @@
+ <label  class="text-danger" style="font-size:30px;color:#ccc;">增加北京数据</label>
+<br/>
+<!-- 增加 -->
+	<form novalidate name="myAddBeijingForm" ng-submit="addBeijingForm()">
+    <label  class="text-danger">one</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="beijing.one" ng-change="beijingChange()" name="one" required ng-pattern="/^\+?[0-9][0-9]*$/"  placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myAddBeijingForm.one.$dirty && myAddBeijingForm.one.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">two</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="beijing.two" ng-change="beijingChange()" name="two" required ng-pattern="/^\+?[0-9][0-9]*$/" placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myAddBeijingForm.two.$dirty && myAddBeijingForm.two.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">three</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="beijing.three" ng-change="beijingChange()" name="three" required ng-pattern="/^\+?[0-9][0-9]*$/" placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myAddBeijingForm.three.$dirty && myAddBeijingForm.three.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">值</label>
+  <div class=" comment-input-margin">
+   <div><span ng-bind="beijing.code"></span></div>
+  </div>
+  <input type="submit" class="btn btn-lg btn-danger" 
+  ng-disabled="myAddBeijingForm.$invalid" value="提交"/>
+</form>
+<!-- 增加end-->

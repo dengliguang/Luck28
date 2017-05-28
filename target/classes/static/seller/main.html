@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title ng-bind="backstageName"></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta name="Keywords" content="系统，管理"/>
+	 <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+     <link href="/resources/css/sellerbase.css" rel="stylesheet">
+	
+    
+</head>
+   <body ng-app="mainApp" ng-controller="mainCtrl">
+  	<div ui-view></div>
+<!-- 按钮触发模态框 -->
+<button class="hide" data-toggle="modal" 
+   data-target="#myModal" id="mySellerModal">
+</button>
+	<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" >
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true" id="closeModal">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="mySellerModalLabel">
+            </h4>
+         </div>
+         <div class="modal-body" id="mySellerModalBody">
+         </div>
+         <div class="modal-footer">
+         	<div id="errorSellerInfo" class="text-justify text-danger"></div>
+            <button type="button" class="btn btn-primary" id="sellerSubmit">
+               提交
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+		<script src="/resources/js/jquery2.1.js"></script>
+		<script src="/resources/js/bootstrap3.2.0.js"></script>
+		<script src="/resources/js/angularjs.min.1.5.7.js"></script>
+		<script src="/resources/js/angular-animate.min.js"></script>
+		<script src="/resources/js/angular-ui-router.min.js"></script>
+        <script src="/resources/js/sortable.min.js"></script>
+       <script src="/resources/js/base64.js"></script> 
+       <script src="/resources/js/base.js"></script> 
+       <script type="text/javascript">
+       
+       angular.module('mainApp', ['ngAnimate','ui.router'])
+        .controller('mainCtrl', function($rootScope,$scope,$http) {
+        //console.log=function(){};
+       $scope.backstageName="幸运28后台系统";//系统名称
+    	  	/*
+            *横向滚动
+            */
+            $scope.tableWrapMove=function(direction){
+            if(direction=='left'){
+            $(".seller-main-body").scrollLeft(0);
+            return;
+            }
+            if(direction=='right'){
+             $(".seller-main-body").scrollLeft( 99999999);
+            return;
+            }
+            };
+            /*
+            *横向滚动 end
+            */
+    	 //验证是否已经登录
+    		$.ajax({
+    		url:"/acount/islogin",
+    		async:false,  
+    		success:function(data){
+       			console.log(data)
+       			if(data.code=='200'){
+       			$rootScope.sessionAcount=data.list[0];
+       			//$rootScope.$apply();
+       			return;
+       			}
+       			location.replace("/seller/index.html");
+       	}});
+   		//登录退出
+   		$scope.sellerLoginOut=function(){
+   			myUtils.myLoginOut("确定退出吗？", function(){
+   				$.get("/acount/loginout",function(data){
+   	   				if(data.code==200){
+   	   					myUtils.myLoadingToast("退出成功", null);   	   				
+   						location.replace("/seller/index.html");
+   	   				}else{
+   	   					myUtils.myLoadingToast("退出失败", null);   	   				
+   	   				}
+   	   			});
+   			});
+   		};
+   		
+   		})
+       .config(function ($stateProvider, $urlRouterProvider) {
+     	$urlRouterProvider.when("", "main");
+     	$stateProvider
+     	.state("main", {
+            url: "/main",
+            views: {
+                '': {
+                    templateUrl: '/seller/templates/main.html'
+                },
+                'topbar@main': {
+                    templateUrl: '/seller/templates/topbar.html'
+                },
+                'leftbar@main': {
+                    templateUrl: '/seller/templates/leftbar.html',
+                    controller:function(){
+                    	myUtils.myClickRotate("a.toCaret","span.caret");//箭头旋转
+                    	$(document).on("click","a",function(){
+                    	$("a").removeClass("leftbar-active");
+                    		$(this).addClass("leftbar-active");
+                    	});
+                    	
+                    }
+                } ,
+                'rightbody@main': {
+                    templateUrl: '/seller/templates/index.html',
+                    controller:function($state){
+                    	 $state.go("main.index");
+                    }
+                } 
+            }
+        })
+         .state("main.index", {
+            url:"/index",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/index.html",
+                    controller:function($rootScope,$scope,$state){
+                
+                    }
+                } 
+            }
+        })
+         .state("main.beijingList", {
+            url:"/beijingList",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/beijing_list.html",
+                    controller:function($rootScope,$scope,$state){
+                  
+            /*
+            *列表
+            */
+            $scope.beijingList=[]; 		
+    		$scope.noMore=false;//false还有，true没有更多
+    		$scope.totalNumber=0;//总管理员数目
+ 			$scope.showPageNumberArray=[];//显示页面循环的数组 类似 1,2,3,4,5
+			$scope.totalPage=0;//总页数
+				
+			$scope.currentPage=1;//当前页
+			$scope.pageNumber=10;//每页显示数目
+			$scope.mostShowPageNumber=5;//设定最多显示页码数目	
+			$scope.pagination=myUtils.myPaginationHandler();
+			
+			//点击哪页显示哪页
+			$scope.toPage=function(currentPageNumber){
+			  if($scope.pagination.toPage(currentPageNumber,$scope.currentPage,$scope.totalPage)){
+			  //$scope.showbeijingListIcon=true;
+			  $scope.currentPage=$scope.pagination.currentPage;
+			  $scope.beijingListInit();
+			  }
+			};
+			$scope.beijingListInit=function(){
+			  $.get("/beijing/count",function(cd){
+           		$scope.totalNumber=cd;             
+           //页码初始化
+          $scope.totalPage=$scope.pagination.getTotalPage($scope.totalNumber,$scope.pageNumber);//总页码数目     
+          $scope.showPageNumberArray=$scope.pagination.getShowPageNumber($scope.totalPage,$scope.pageNumber,$scope.mostShowPageNumber,$scope.currentPage);//显示页码数目 
+        //初始化
+  $.get("/beijing/list?pageNum="+(($scope.currentPage-1)*$scope.pageNumber+1)+"&pageSize="+$scope.pageNumber,function(pld){
+           $scope.beijingList=pld;
+			 console.log($scope.beijingList)
+			$scope.$apply();
+               });
+       });
+			};
+			$scope.beijingListInit();
+			/*
+            *列表end
+            */
+			/*
+            *修改
+            */
+            $scope.updateBeijing=function(beijing){
+            $state.go("main.beijingUpdate",{beijingId:beijing.beijingId});
+            };
+			/*
+            *修改end
+            */
+			/*
+            *删除
+            */
+            $scope.delBeijing=function(beijing){
+            	myUtils.myLoginOut("确定删除吗？", function(){
+       				$.get("/beijing/"+beijing.beijingId+"/delete",function(data){
+       					console.log($scope.beijingList)
+       	   				if(data.code==200){
+       	   				myUtils.myLoadingToast("删除成功", function(){
+       	   				location.reload();
+       	   				}); 
+       	   				
+       	   				}else{
+       	   					myUtils.myLoadingToast("删除失败", null);   	   				
+       	   				}
+       	   			});
+       			});
+            };
+			/*
+            *删除end
+            */
+                    }
+                } 
+            }
+        })
+         .state("main.beijingUpdate", {
+            url:"/beijingUpdate/:beijingId",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/beijing_update.html",
+                    controller:function($rootScope,$scope,$state){
+                  	/*
+            		*获取参数beijingId
+            		*/
+                    $scope.updateBeijingId=$state.params.beijingId;
+                    console.log($scope.updateBeijingId)
+                     if(!$scope.updateBeijingId||!myUtils.userVerification.catNum.test($scope.updateBeijingId)){
+                    $state.go("main.beijingList");
+                    return;
+                    } 
+                    /*
+            		*获取参数beijingId end
+            		*/
+            		$scope.beijing={};
+            		/*
+            		*初始化beijing
+            		*/
+                    $scope.updateInit=function(beijingId){
+                    $.get("/beijing/"+beijingId,function(data){
+       	   				if(data.code==200){
+       	   				$scope.beijing=data.list[0];
+       	   				$scope.$apply();
+       	   				myUtils.myLoadingToast("加载成功",null ); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("加载失败", null);   	   				
+       	   				}
+       	   			});
+                    };
+                    $scope.updateInit($scope.updateBeijingId);
+                    /*
+            		*初始化beijing end
+            		*/
+            		$scope.beijingChange=function(){
+            		$scope.beijing.code=parseInt($scope.beijing.one)+parseInt($scope.beijing.two)+parseInt($scope.beijing.three);
+            		};
+            		/*
+            		*修改beijing提交
+            		*/
+            		$scope.updateBeijingForm=function(){
+            		$.post("/beijing/update",
+                    	/* {
+                    	beijingId:$scope.beijing.beijingId,
+                    	title:$scope.beijing.title,
+                    	content:$scope.beijing.content,
+                    	createDate:$scope.beijing.createDate
+                    	}, */
+                    	JSON.parse(angular.toJson($scope.beijing)),
+                    	function(data){
+       	   				if(data.code==200){
+       	   				myUtils.myLoadingToast("修改成功", null); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("修改失败", null);   	   				
+       	   				}
+       	   				});
+            		};
+            		/*
+            		*修改beijing提交 end
+            		*/
+                    }
+                } 
+            }
+        })
+         .state("main.beijingAdd", {
+            url:"/beijingAdd",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/beijing_add.html",
+                    controller:function($rootScope,$scope,$state){
+                    $scope.beijing={
+                    one:0,
+                    two:0,
+                    three:0
+                    };
+                    $scope.beijingChange=function(){
+            		$scope.beijing.code=parseInt($scope.beijing.one)+parseInt($scope.beijing.two)+parseInt($scope.beijing.three);
+            		};
+                    $scope.addBeijingForm=function(){
+                    	$.post("/beijing/add",
+                    	JSON.parse(angular.toJson($scope.beijing)),
+                    	function(data){
+       	   				if(data.code==200){
+       	   				$scope.beijing={};
+       	   				$scope.myAddBeijingForm.$setPristine();
+       	   				$scope.$apply();
+       	   				myUtils.myLoadingToast("添加成功", null); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("添加失败", null);   	   				
+       	   				}
+       	   				});
+                    };
+                    }
+                } 
+            }
+        }).state("main.jianadaList", {
+            url:"/jianadaList",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/jianada_list.html",
+                    controller:function($rootScope,$scope,$state){
+                  
+            /*
+            *列表
+            */
+            $scope.jianadaList=[]; 		
+    		$scope.noMore=false;//false还有，true没有更多
+    		$scope.totalNumber=0;//总管理员数目
+ 			$scope.showPageNumberArray=[];//显示页面循环的数组 类似 1,2,3,4,5
+			$scope.totalPage=0;//总页数
+				
+			$scope.currentPage=1;//当前页
+			$scope.pageNumber=10;//每页显示数目
+			$scope.mostShowPageNumber=5;//设定最多显示页码数目	
+			$scope.pagination=myUtils.myPaginationHandler();
+			
+			//点击哪页显示哪页
+			$scope.toPage=function(currentPageNumber){
+			  if($scope.pagination.toPage(currentPageNumber,$scope.currentPage,$scope.totalPage)){
+			  //$scope.showbeijingListIcon=true;
+			  $scope.currentPage=$scope.pagination.currentPage;
+			  $scope.jianadaListInit();
+			  }
+			};
+			$scope.jianadaListInit=function(){
+			  $.get("/jianada/count",function(cd){
+           		$scope.totalNumber=cd;             
+           //页码初始化
+          $scope.totalPage=$scope.pagination.getTotalPage($scope.totalNumber,$scope.pageNumber);//总页码数目     
+          $scope.showPageNumberArray=$scope.pagination.getShowPageNumber($scope.totalPage,$scope.pageNumber,$scope.mostShowPageNumber,$scope.currentPage);//显示页码数目 
+        //初始化
+  $.get("/jianada/list?pageNum="+(($scope.currentPage-1)*$scope.pageNumber+1)+"&pageSize="+$scope.pageNumber,function(pld){
+           $scope.jianadaList=pld;
+			 console.log($scope.jianadaList)
+			$scope.$apply();
+               });
+       });
+			};
+			$scope.jianadaListInit();
+			/*
+            *列表end
+            */
+			/*
+            *修改
+            */
+            $scope.updateJianada=function(jianada){
+            $state.go("main.jianadaUpdate",{jianadaId:jianada.jianadaId});
+            };
+			/*
+            *修改end
+            */
+			/*
+            *删除
+            */
+            $scope.delJianada=function(jianada){
+            	myUtils.myLoginOut("确定删除吗？", function(){
+       				$.get("/jianada/"+jianada.jianadaId+"/delete",function(data){
+       					console.log($scope.jianadaList)
+       	   				if(data.code==200){
+       	   				myUtils.myLoadingToast("删除成功", function(){
+       	   				location.reload();
+       	   				}); 
+       	   				
+       	   				}else{
+       	   					myUtils.myLoadingToast("删除失败", null);   	   				
+       	   				}
+       	   			});
+       			});
+            };
+			/*
+            *删除end
+            */
+                    }
+                } 
+            }
+        })
+         .state("main.jianadaUpdate", {
+            url:"/jianadaUpdate/:jianadaId",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/jianada_update.html",
+                    controller:function($rootScope,$scope,$state){
+                  	/*
+            		*获取参数jianadaId
+            		*/
+                    $scope.updateJianadaId=$state.params.jianadaId;
+                    console.log($scope.updateJianadaId)
+                     if(!$scope.updateJianadaId||!myUtils.userVerification.catNum.test($scope.updateJianadaId)){
+                    $state.go("main.jianadaList");
+                    return;
+                    } 
+                    /*
+            		*获取参数jianadaId end
+            		*/
+            		$scope.jianada={};
+            		/*
+            		*初始化jianada
+            		*/
+                    $scope.updateInit=function(jianadaId){
+                    $.get("/jianada/"+jianadaId,function(data){
+       	   				if(data.code==200){
+       	   				$scope.jianada=data.list[0];
+       	   				$scope.$apply();
+       	   				myUtils.myLoadingToast("加载成功",null ); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("加载失败", null);   	   				
+       	   				}
+       	   			});
+                    };
+                    $scope.updateInit($scope.updateJianadaId);
+                    /*
+            		*初始化jianada end
+            		*/
+            		$scope.jianadaChange=function(){
+            		$scope.jianada.code=parseInt($scope.jianada.one)+parseInt($scope.jianada.two)+parseInt($scope.jianada.three);
+            		};
+            		/*
+            		*修改jianada提交
+            		*/
+            		$scope.updateJianadaForm=function(){
+            		$.post("/jianada/update",
+                    	JSON.parse(angular.toJson($scope.jianada)),
+                    	function(data){
+       	   				if(data.code==200){
+       	   				myUtils.myLoadingToast("修改成功", null); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("修改失败", null);   	   				
+       	   				}
+       	   				});
+            		};
+            		/*
+            		*修改jianada提交 end
+            		*/
+                    }
+                } 
+            }
+        })
+         .state("main.jianadaAdd", {
+            url:"/jianadaAdd",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/jianada_add.html",
+                    controller:function($rootScope,$scope,$state){
+                    $scope.jianada={
+                    one:0,
+                    two:0,
+                    three:0
+                    };
+                    $scope.jianadaChange=function(){
+            		$scope.jianada.code=parseInt($scope.jianada.one)+parseInt($scope.jianada.two)+parseInt($scope.jianada.three);
+            		};
+                    $scope.addJianadaForm=function(){
+                    	$.post("/jianada/add",
+                    	JSON.parse(angular.toJson($scope.jianada)),
+                    	function(data){
+       	   				if(data.code==200){
+       	   				$scope.jianada={};
+       	   				$scope.myAddJianadaForm.$setPristine();
+       	   				$scope.$apply();
+       	   				myUtils.myLoadingToast("添加成功", null); 
+       	   				}else{
+       	   					myUtils.myLoadingToast("添加失败", null);   	   				
+       	   				}
+       	   				});
+                    };
+                    }
+                } 
+            }
+        });
+		});		
+		</script>
+        </body>
+</html>

@@ -1,0 +1,34 @@
+server:
+  port: 8001
+#mybatis配置
+mybatis: 
+  #check-config-location: true
+  #executor-type: batch
+  type-aliases-package: com.nieyue.bean 
+  mapper-locations: classpath:config/mapper/*.xml   
+  configuration: 
+    mapUnderscoreToCamelCase: true
+    useColumnLabel: true
+    useGeneratedKeys: true   
+spring:
+  mvc: 
+    date-format: yyyy-MM-dd HH:mm:ss
+  jackson: 
+    #property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+    date-format: yyyy-MM-dd HH:mm:ss 
+    time-zone:  GMT+8
+  http:
+    multipart:
+      max-file-size: 2MB
+       
+  thymeleaf:
+    cache: false
+  devtools:
+    livereload:
+      enabled: true    
+  datasource:
+    #url: jdbc:mysql://120.25.228.28:3306/luck28_db
+    url: jdbc:mysql://localhost:3306/luck28_db
+    username: root
+    password: liliu
+    driver-class-name: com.mysql.jdbc.Driver

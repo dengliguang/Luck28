@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.BeijingDao">
+<!-- 添加北京 -->
+<insert id="addBeijing" parameterType="Beijing" keyProperty="beijingId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  beijing_tb 
+   		 (beijing_id,one,two,three,code,time)
+   VALUES
+    	 (#{beijingId},#{one},#{two},#{three},#{code},#{time})  
+</insert>  
+<!-- 更新北京 -->
+<update id="updateBeijing" parameterType="Beijing" >  
+    UPDATE 
+    	beijing_tb 
+    SET 
+    	one=#{one},
+    	two=#{two},
+    	three=#{three},
+    	code=#{code},
+    	time=#{time}
+    WHERE
+    	 beijing_id=#{beijingId} 
+</update> 
+<!-- 删除北京-->
+<delete id="delBeijing"  parameterType="Integer" >  
+    DELETE FROM
+    	 beijing_tb 
+    	 WHERE beijing_id=#{beijingId}
+</delete>  
+<!-- 加载北京-->
+<select id="loadBeijing" parameterType="Integer" resultType="Beijing" >
+SELECT 
+		beijing_id,
+		one,
+		two,
+		three,
+		code,
+		time
+FROM beijing_tb 
+WHERE beijing_id=#{beijingId}
+</select>
+<!-- 分页查询北京-->
+<select id="browsePagingBeijing" resultType="Beijing">  
+    SELECT
+	    beijing_id,
+		one,
+		two,
+		three,
+		code,
+		time
+	FROM beijing_tb
+	<where>
+	AND beijing_id 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT beijing_id FROM beijing_tb 
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(beijing_id)
+	FROM beijing_tb
+</select>   
+</mapper>

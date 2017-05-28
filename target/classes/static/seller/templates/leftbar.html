@@ -1,0 +1,53 @@
+<!-- 左边导航 -->
+	 <div class="panel-group"  id="accordion" role="tablist" aria-multiselectable="true">
+   <!-- 首页end -->
+   <div class="panel " >
+    <div class="panel-heading" >
+      <h4 class="panel-title">
+        <a role="button" class="nav-active" ui-sref="main.index" href="#collapseIndex">
+          	首页
+        </a>
+      </h4>
+    </div>
+  </div>
+  <!-- 首页end -->
+ <!-- 北京数据导航 -->
+ <div class="panel " ng-if="sessionAcount">
+    <div class="panel-heading" role="tab" id="headingBeijing">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseBeijing" aria-expanded="false" aria-controls="collapseBeijing">
+         北京数据管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseBeijing" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingBeijing">
+      <div class="panel-body">
+		<div><a ui-sref="main.beijingList">北京数据列表</a></div>
+		<div><a ui-sref="main.beijingAdd">增加北京数据</a></div>
+      </div>
+    </div>
+  </div>
+  <!-- 北京数据导航 end -->
+ <!-- 加拿大数据导航 -->
+ <div class="panel " ng-if="sessionAcount">
+    <div class="panel-heading" role="tab" id="headingJianada">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseJianada" aria-expanded="false" aria-controls="collapseJianada">
+         加拿大数据管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseJianada" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingJianada">
+      <div class="panel-body">
+		<div><a ui-sref="main.jianadaList">加拿大数据列表</a></div>
+		<div><a ui-sref="main.jianadaAdd">增加加拿大数据</a></div>
+      </div>
+    </div>
+  </div>
+  <!-- 加拿大数据导航 end -->
+
+  
+  </div>
+	<!-- end左边导航 -->

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>数据</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+	content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<meta name="keywords" content="数据列表">
+<meta charset="UTF-8">
+<meta name="description"
+	content="数据列表">
+<link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+<link href="/resources/css/sellerbase.css" rel="stylesheet">
+<style>
+html,body{
+background-color:#fff;
+}
+.navactive{
+background-color:#dedede;
+}
+.boll-box{
+display:inline-block;
+height:28px;
+width:28px;
+color:#fff;
+border-radius:28px;
+line-height:28px;
+font-size:14px;
+vertical-align:middle;
+}
+.boll-box2{
+display:inline-block;
+height:28px;
+width:40px;
+color:#fff;
+border-radius:28px;
+line-height:28px;
+font-size:14px;
+vertical-align:middle;
+}
+@MEDIA screen and (max-width:640px) {
+.boll-box{
+display:inline-block;
+height:15px;
+width:15px;
+color:#fff;
+border-radius:15px;
+line-height:15px;
+font-size:8px;
+vertical-align:middle;
+}
+@MEDIA screen and (max-width:640px) {
+.boll-box2{
+display:inline-block;
+height:15px;
+width:30px;
+color:#fff;
+border-radius:15px;
+line-height:15px;
+font-size:8px;
+vertical-align:middle;
+}
+table,thead,tbody,tr,th,td{
+border:0 solid #ccc !important;
+margin:0 !important;
+padding:0 !important;
+
+}
+}
+</style>
+</head>
+
+<body ng-app="indexApp">
+	<div ng-controller="indexCtrl" >
+<div style="margin-top:10px;max-width:1140px;margin:auto;">
+	<div class="row" style="background-color:#fff;color:#717171;border:1px solid #dedede;text-align:center;line-height:38px;font-weight:700;font-size:14px;height:38px;">
+		<div class="col-lg-1 col-sm-2 col-xs-6" style="height:100%;cursor:pointer;" ng-class="{'navactive':nav=='beijing'}" ng-click="changeNav('beijing')">北京</div>
+		<div class="col-lg-1 col-sm-2 col-xs-6" style="height:100%;cursor:pointer;" ng-class="{'navactive':nav=='jianada'}" ng-click="changeNav('jianada')">加拿大</div>
+	</div>	
+	<div class="row" style="background-color:#f6f5f5;padding:5px;margin-bottom:20px;border:1px solid #dedede;border-top:0;">
+		<div class="col-md-4 col-sm-6 text-center" style="margin-top:4px;height:68px;background-color:#fff;border:1px solid #dedede;">
+			<div style="display: inline-block;">
+				<span class="pull-left"><img style="width:50px;padding:9px 0;" alt="" src="{{img}}"></span>
+				<div class="pull-left"style="margin:0 10px;">
+					<span style="color:#333;font-size:16px;display:block;line-height:36px;">最新：<span style="color:red;" ng-bind="datalist[0].beijingId||datalist[0].jianadaId"></span>期</span>
+					<div class="btn-group" role="group" style="height:30px;margin-top:-5px !important;">
+					  <button type="button"  ng-disabled="selectData==datalist[0]" ng-click="leftSelect()" class="btn btn-default" style="height:30px;line-height:0;font-weight:bold;">&lt;</button>
+					
+					  <div class="btn-group" role="group" style="height:30px;">
+					    <button type="button"  style="height:30px;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					      <span  ng-bind="selectData.beijingId||selectData.jianadaId"></span>
+					      <span class="caret"></span>
+					    </button>
+					    <ul class="dropdown-menu">
+					      <li ng-repeat="data in datalist" ng-if="$index<10" ng-click="middleSelect(data)">
+					      <a href="#" ng-bind="data.beijingId||data.jianadaId" ></a>
+					      </li>
+					    </ul>
+					  </div>
+					  <button type="button" ng-disabled="selectData==datalist[9]"  ng-click="rightSelect()" class="btn btn-default" style="height:30px;line-height:0;font-weight:bold;">&gt;</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div ng-if="time!='维护中'" class="col-md-4 col-sm-6 text-center" style="margin-top:4px;height:68px;background-color:#fff;border:1px solid #dedede;line-height:68px;">
+			下一期：
+			<span style="display:inline-block;background-color:#fb4755;height:48px;width:48px;color:#fff;border-radius:3px;line-height:48px;font-size:32px;vertical-align:middle;" ng-bind="timeSeconds"></span>
+			 &nbsp;分&nbsp;
+			<span style="display:inline-block;background-color:#fb4755;height:48px;width:48px;color:#fff;border-radius:3px;line-height:48px;font-size:32px;vertical-align:middle" ng-bind="timeMinutes"></span>
+			&nbsp;秒
+		</div>
+		<div ng-if="time=='维护中'" class="col-md-4 col-sm-6 text-center" style="margin-top:4px;height:68px;background-color:#fff;border:1px solid #dedede;line-height:68px;">
+			系统维护中
+		</div>
+		<div class="col-md-4 col-sm-6 text-center" style="margin-top:4px;height:68px;background-color:#fff;border:1px solid #dedede;line-height:68px;padding-left:0;">
+			<div style="border-right:1px solid #ccc;height:60px;padding-right:8px;display: inline-block;">
+				<span style="display:inline-block;background-color:#13b5b1;height:38px;width:38px;color:#fff;border-radius:3px;line-height:38px;font-size:24px;vertical-align:middle;" ng-bind="selectData.one"></span>
+				+
+				<span style="display:inline-block;background-color:#13b5b1;height:38px;width:38px;color:#fff;border-radius:3px;line-height:38px;font-size:24px;vertical-align:middle;" ng-bind="selectData.two">5</span>
+				+
+				<span style="display:inline-block;background-color:#13b5b1;height:38px;width:38px;color:#fff;border-radius:3px;line-height:38px;font-size:24px;vertical-align:middle;" ng-bind="selectData.three">6</span>
+				=
+				<span style="display:inline-block;background-color:#556fb5;height:38px;width:38px;color:#fff;border-radius:3px;line-height:38px;font-size:24px;vertical-align:middle;" ng-bind="selectData.code">15</span>
+			</div>
+			<div  style="height:60px;display: inline-block;margin-left:8px;">
+				<span ng-if="selectData.code<14" style="display:inline-block;background-color:#e60012;height:28px;width:28px;color:#fff;border-radius:28px;line-height:28px;font-size:14px;vertical-align:middle;">小</span>
+				<span ng-if="selectData.code>=14" style="display:inline-block;background-color:#00a0e9;height:28px;width:28px;color:#fff;border-radius:28px;line-height:28px;font-size:14px;vertical-align:middle;">大</span>
+				<span ng-if="selectData.code%2!=0" style="display:inline-block;background-color:#e60012;height:28px;width:28px;color:#fff;border-radius:28px;line-height:28px;font-size:14px;vertical-align:middle;">单</span>
+				<span ng-if="selectData.code%2==0"style="display:inline-block;background-color:#00a0e9;height:28px;width:28px;color:#fff;border-radius:28px;line-height:28px;font-size:14px;vertical-align:middle;">双</span>
+			</div>
+		</div>
+	</div>	
+</div>
+<!-- 数据列表选择end -->
+<!-- 数据列表 -->
+  	<div style="max-width:1140px;margin:auto;border:1px solid #dedede; font-size:0.81rem;">
+			<table class="table table-bordered table-striped" style="width:100%;background-color: #fff;">
+			<caption>
+						<button  style="color:#fff"class="col-xs-6 btn  " ng-class="{'btn-info':showResult=='走势图','btn-primary':showResult=='结果'}"  ng-click="changeResult('结果')">
+						<i class="glyphicon glyphicon-piggy-bank"></i>
+						结果</button>
+						<button style="color:#fff"class="col-xs-6 btn " ng-class="{'btn-info':showResult=='结果','btn-primary':showResult=='走势图'}" ng-click="changeResult('走势图')">
+						<i class="glyphicon glyphicon-stats"></i>
+						走势图</button> 
+			
+			</caption>
+			<thead ng-if="showResult=='结果'">
+				<tr>
+				  <th >期号</th>
+				  <th >时间</th>
+				  <th>号码</th>
+				</tr>
+			</thead>
+			<tbody ng-if="showResult=='结果'">
+				<tr ng-repeat="data in datalist">
+				  <td ng-bind="data.beijingId||data.jianadaId"></td> 
+				  <td ng-bind="data.time"></td>
+				  <td >
+				  <span ng-bind="data.one"></span>
+				  +
+				  <span ng-bind="data.two"></span>
+				  +
+				  <span ng-bind="data.three"></span>
+				  =
+				  <span ng-bind="data.code"></span>
+				  </td>
+				</tr>
+			</tbody>
+			<thead ng-if="showResult=='走势图'">
+				<tr>
+				  <th >期号</th>
+				  <th >值</th>
+				  <th>大</th>
+				  <th>小</th>
+				  <th>单</th>
+				  <th>双</th>
+				  <th>大单</th>
+				  <th>大双</th>
+				  <th>小单</th>
+				  <th>小双</th>
+				</tr>
+			</thead>
+			<tbody ng-if="showResult=='走势图'">
+				<tr ng-repeat="data in datalist">
+				  <td ng-bind="data.beijingId||data.jianadaId"></td> 
+				  <td ng-bind="data.code"></td>
+				  <td >
+				  <span ng-if="data.code>=14" class="boll-box" style="background-color:#00a0e9;">大</span>
+				  </td>
+				  <td >
+				 <span ng-if="data.code<14" class="boll-box"style="background-color:#e60012;">小</span>
+				  </td>
+				  <td >
+				<span ng-if="data.code%2!=0" class="boll-box"style=";background-color:#e60012;">单</span>	
+				</td>
+				  <td >
+				<span ng-if="data.code%2==0"class="boll-box"style="background-color:#00a0e9;">双</span>
+				</td>
+				  <td >
+				<span ng-if="data.code>=14&&data.code%2!=0"class="boll-box2"style="background-color:#e60012;">大单</span>
+				</td>
+				  <td >
+				<span ng-if="data.code>=14&&data.code%2==0"class="boll-box2"style="background-color:#00a0e9;">大双</span>
+				</td>
+				  <td >
+				<span ng-if="data.code<14&&data.code%2!=0"class="boll-box2"style="background-color:#e60012;">小单</span>
+				</td>
+				  <td >
+				<span ng-if="data.code<14&&data.code%2==0"class="boll-box2"style="background-color:#00a0e9;">小双</span>
+				</td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+		
+<!-- 数据列表end -->
+</div>
+	<!-- 页面列表end -->
+	<script src="/resources/js/jquery2.1.js"></script>
+	<script src="/resources/js/bootstrap3.2.0.js"></script>
+	<script src="/resources/js/angularjs.min.1.5.7.js"></script>
+	<script src="/resources/js/base.js"></script>
+	<script>
+	$(function(){
+	//获取data-src
+	$("img").each(function(index){
+		if($(this).attr("data-src")){
+			$(this).attr("src",$(this).attr("data-src"));
+		}
+	});
+	//$("#loadAnimationBody").css("display","none");
+	});
+    	var indexApp=angular.module('indexApp',[]);
+    	  indexApp.filter("dateDiff",function(){
+                return function(dateTimeStamp){
+                    return myUtils.getDateDiff(dateTimeStamp);
+                }
+            });
+       
+					
+    	indexApp.controller('indexCtrl',function($scope){
+    	$scope.img="http://www.pc28pc28.com/open/static/images/bjkl8_logo.png";//图片
+    	$scope.nav='beijing';//导航栏
+    	$scope.showResult='结果';//结果栏
+    	$scope.selectData={};//选择的数据
+    	$scope.num=0;//第一个
+    	//选择导航栏
+    	$scope.changeNav=function(nav){
+    	if(nav=='beijing'||nav=='jianada'){
+    	$scope.nav=nav;
+    	$scope.num=0;//清零
+    	if(nav=='beijing'){
+    	$scope.img="http://www.pc28pc28.com/open/static/images/bjkl8_logo.png";
+    	}else{
+    	$scope.img="http://www.pc28pc28.com/open/static/images/canada_logo.png";
+    	
+    	}
+    	//$scope.timer=null;//清除定时器
+    	clearInterval($scope.timer)
+    	init($scope.nav);
+    	getTime($scope.nav);
+    	}
+    	};
+    	//选择结果栏
+    	$scope.changeResult=function(result){
+    	if(result=='结果'||result=='走势图'){
+    	$scope.showResult=result;
+    	console.log($scope.showResult)
+    	}
+    	};
+        //初始化
+        function init(nav){
+        var url="";
+        if(nav=='beijing'||nav=='jianada'){
+        url="/"+nav+"/list?pageNum=1&pageSize=50";
+        }
+  $.ajax({url:url,
+  type:"GET",
+  async:true,
+  success:function(d){
+  console.log(d)
+  if(d.code==200){
+           $scope.datalist=d.list;
+          $scope.selectData=$scope.datalist[$scope.num];
+          $scope.$apply();
+  }
+       }});
+        }
+        //初始化
+        
+        init($scope.nav);
+        //$scope.selectData=$scope.datalist[$scope.num];
+        //左选
+        $scope.leftSelect=function(){
+        	$scope.num-=1;
+        	if($scope.num<0){
+        	$scope.num=0;
+        	}
+        	console.log($scope.num)
+        	$scope.selectData=$scope.datalist[$scope.num];
+        };
+        //右选
+        $scope.rightSelect=function(){
+        $scope.num+=1;
+        	if($scope.num>9){
+        	$scope.num=9;
+        	}
+        	console.log($scope.num)
+        	$scope.selectData=$scope.datalist[$scope.num];
+        };
+        //中选
+        $scope.middleSelect=function(data){
+        $scope.selectData=$scope.datalist[$scope.datalist.indexOf(data)];
+        };
+        
+        //获取时间
+		$scope.time=0;
+		$scope.timeSeconds=0;
+		$scope.timeMinutes=0;
+		$scope.timer;//定时器
+         //初始化
+        function getTime(nav){
+        var url="";
+        if(nav=='beijing'||nav=='jianada'){
+        url="/"+nav+"/time";
+        }
+        
+  $.ajax({url:url,
+  type:"GET",
+  async:true,
+  success:function(d){
+  if(d.code==200){
+           $scope.time=d.list[0].time;
+           console.log($scope.time)
+           if($scope.time!='维护中'){
+           $scope.timeSeconds=parseInt($scope.time/1000/60);
+           $scope.timeMinutes=parseInt($scope.time/1000%60);
+           $scope.timer=setInterval(function(){
+           $scope.time-=1000;
+           $scope.timeSeconds=parseInt($scope.time/1000/60);
+           $scope.timeMinutes=parseInt($scope.time/1000%60);
+           $scope.$apply();
+           //拉取数据
+           if($scope.timeSeconds==0&&$scope.timeMinutes==0){
+           $scope.changeNav($scope.nav);
+           }
+           },1000);
+           }
+          $scope.$apply();
+          //System.out.println("剩余"+time/1000/60+"分钟，"+time/1000%60+"秒");
+  }
+       }});
+        }
+        getTime($scope.nav);
+    	});
+    </script>
+</body>
+</html>

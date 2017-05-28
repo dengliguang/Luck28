@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.JianadaDao">
+<!-- 添加加拿大 -->
+<insert id="addJianada" parameterType="Jianada" keyProperty="jianadaId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  jianada_tb 
+   		 (jianada_id,one,two,three,code,time)
+   VALUES
+    	 (#{jianadaId},#{one},#{two},#{three},#{code},#{time})  
+</insert>  
+<!-- 更新加拿大 -->
+<update id="updateJianada" parameterType="Jianada" >  
+    UPDATE 
+    	jianada_tb 
+    SET 
+    	one=#{one},
+    	two=#{two},
+    	three=#{three},
+    	code=#{code},
+    	time=#{time}
+    WHERE
+    	 jianada_id=#{jianadaId} 
+</update> 
+<!-- 删除加拿大-->
+<delete id="delJianada"  parameterType="Integer" >  
+    DELETE FROM
+    	 jianada_tb 
+    	 WHERE jianada_id=#{jianadaId}
+</delete>  
+<!-- 加载加拿大-->
+<select id="loadJianada" parameterType="Integer" resultType="Jianada" >
+SELECT 
+		jianada_id,
+		one,
+		two,
+		three,
+		code,
+		time
+FROM jianada_tb 
+WHERE jianada_id=#{jianadaId}
+</select>
+<!-- 分页查询加拿大-->
+<select id="browsePagingJianada" resultType="Jianada">  
+    SELECT
+	    jianada_id,
+		one,
+		two,
+		three,
+		code,
+		time
+	FROM jianada_tb
+	<where>
+	AND jianada_id 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT jianada_id FROM jianada_tb 
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(jianada_id)
+	FROM jianada_tb
+</select>   
+</mapper>

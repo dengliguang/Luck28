@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AcountDao">
+<!-- 添加账户 -->
+<insert id="addAcount" parameterType="Acount" keyProperty="acountId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  acount_tb 
+   		 (phone,email,password,create_date,login_date)
+   VALUES
+    	 (#{phone},#{email},#{password},#{createDate},#{loginDate})  
+</insert>  
+<!-- 更新账户 -->
+<update id="updateAcount" parameterType="Acount" >  
+    UPDATE 
+    	acount_tb 
+    SET 
+    	phone=#{phone},
+    	email=#{email},
+    	password=#{password},
+    	create_date=#{createDate},
+    	login_date=#{loginDate}
+    WHERE
+    	 acount_id=#{acountId} 
+</update> 
+<!-- 删除账户-->
+<delete id="delAcount"  parameterType="Integer" >  
+    DELETE FROM
+    	 acount_tb 
+    	 WHERE acount_id=#{acountId}
+</delete>  
+<!-- 加载账户-->
+<select id="loadAcount" parameterType="Integer" resultType="Acount" >
+SELECT 
+		acount_id,
+	 	phone,
+    	email,
+    	password,
+    	create_date,
+    	login_date
+FROM acount_tb 
+WHERE acount_id=#{acountId}
+</select>
+<!-- 分页查询账户-->
+<select id="browsePagingAcount" resultType="Acount">  
+    SELECT
+	    acount_id,
+	 	phone,
+    	email,
+    	password,
+    	create_date,
+    	login_date
+	FROM acount_tb
+	<where>
+	AND acount_id 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT acount_id FROM acount_tb 
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(acount_id)
+	FROM acount_tb
+</select>   
+ <!-- 管理员登录-->
+<select id="loginAcount" parameterType="String" resultType="Acount" >
+SELECT 
+		acount_id,
+	 	phone,
+    	email,
+    	password,
+    	create_date,
+    	login_date
+FROM acount_tb 
+WHERE 
+(phone=#{adminName}  OR email=#{adminName})
+AND password=#{password} 
+</select>  
+</mapper>

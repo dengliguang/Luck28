@@ -1,0 +1,38 @@
+<div style="margin:10px;">
+<button class="btn btn-primary" ui-sref="main.jianadaList">返回加拿大数据列表</button>
+</div>
+ <label  class="text-danger" style="font-size:30px;color:#ccc;">修改加拿大数据</label>
+<br/>
+<!-- 修改 -->
+	<form novalidate name="myUpdateJianadaForm" ng-submit="updateJianadaForm()">
+    <label  class="text-danger">期号</label>
+    <div><span ng-bind="Jianada.JianadaId"></span></div>
+    <label  class="text-danger">one</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="jianada.one" ng-change="jianadaChange()" name="one" required ng-pattern="/^\+?[0-9][0-9]*$/"  placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myUpdateJianadaForm.one.$dirty && myUpdateJianadaForm.one.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">two</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="jianada.two" ng-change="jianadaChange()" name="two" required ng-pattern="/^\+?[0-9][0-9]*$/" placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myUpdateJianadaForm.two.$dirty && myUpdateJianadaForm.two.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">three</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="jianada.three" ng-change="jianadaChange()" name="three" required ng-pattern="/^\+?[0-9][0-9]*$/" placeholder="含零正整数">
+    <div class="text-danger alert alert-danger " ng-show="myUpdateJianadaForm.three.$dirty && myUpdateJianadaForm.three.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>含零正整数
+				    </div>
+  </div>
+    <label  class="text-danger">值</label>
+  <div class=" comment-input-margin">
+   <div><span ng-bind="jianada.code"></span></div>
+  </div>
+  <input type="submit" class="btn btn-lg btn-danger" 
+  ng-disabled="myUpdateJianadaForm.$invalid" value="提交"/>
+</form>
+<!-- 修改end-->

@@ -1,0 +1,54 @@
+<!-- 加拿大数据列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">加拿大数据列表</label>
+</div>
+<!-- 加拿大数据列表选择end -->
+<!-- 加拿大数据列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+			<tr>
+			  <th>序号</th>
+			  <th>期号</th>
+			  <th>one</th>
+			  <th>two</th>
+			  <th>three</th>
+			  <th>值</th>
+			  <th>时间</th>
+			  <th >操作</th> 
+			</tr>
+			<tr ng-repeat="jianada in jianadaList.list" >
+			  <td >
+			  <span ng-bind="(currentPage-1)*pageNumber+$index+1"></span>
+			  </td>
+			  <td >
+			  <span ng-bind="jianada.jianadaId"></span>
+			  </td>
+			  <td ng-bind="jianada.one"></td>
+			  <td ng-bind="jianada.two"></td>
+			  <td ng-bind="jianada.three"></td>
+			  <td ng-bind="jianada.code"></td>
+			  <td ng-bind="jianada.time"></td>
+			 <td >
+			  <button class=" btn btn-warning" ng-click="updateJianada(jianada)">修改</button>
+			  <button class=" btn btn-danger" ng-click="delJianada(jianada)">删除</button>
+			  </td>
+			</tr>
+			</table>
+		</div>
+<!-- 加拿大数据列表end -->
+	<!-- 页面列表end -->
+<!-- 加载更多end -->
+   <div >
+    <ul class="pagination " >
+    <li><a ng-click="toPage('首页')" >首页</a></li>
+    <li class="previous" ><a ng-click="toPage('previous')" >&larr;</a></li>
+
+    <li ng-repeat="currentPageNumber in showPageNumberArray"><a ng-click="toPage(currentPageNumber)" ng-class="{active:currentPageNumber==currentPage}">{{currentPageNumber}}</a></li>
+
+    <li class="next"  ><a ng-click="toPage('next')" >&rarr;</a></li>
+    <li><a ng-click="toPage('尾页')" >尾页</a></li>
+    <li> <span>总页数：{{totalPage}}</span></li>
+    <li><span>总数：{{totalNumber}}</span></li>
+    </ul>
+   </div>
+<!--  加载更多end -->
