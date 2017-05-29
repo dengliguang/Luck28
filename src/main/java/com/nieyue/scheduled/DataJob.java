@@ -11,7 +11,7 @@ import com.nieyue.bussiness.AddData;
 
 @Component
 public class DataJob {
-	 public final static long ONE_Minute =   60*1000;
+	 public final static long ONE_Minute =   20*1000;
 	 public  static long BEIJING_TIME =   60*1000;
 	 public  static long JIANADA_TIME =   60*1000;
 	 /**
