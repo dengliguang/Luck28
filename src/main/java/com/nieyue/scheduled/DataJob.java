@@ -12,29 +12,22 @@ import com.nieyue.bussiness.AddData;
 @Component
 public class DataJob {
 	 public final static long ONE_Minute =   20*1000;
+	 public final static long TEN_SECONDS =   10*1000;
 	 public  static long BEIJING_TIME =   60*1000;
 	 public  static long JIANADA_TIME =   60*1000;
-	 /**
-	  * PC蛋蛋28 调用地址: https://api.zao28.com/News?name=xy28&type=json
-	  *加拿大28 调用地址: https://api.zao28.com/News?name=jnd28&type=json
-	  *新加坡28 调用地址: https://api.zao28.com/News?name=xjp28&type=json
-	  *CQ时时彩 调用地址: https://api.zao28.com/News?name=cqssc&type=json
-	  *北京PK10 调用地址: https://api.zao28.com/News?name=bjpk10&type=json
-	  */
-	 public  static String BEIJING_URL =   "http://api.dabai28.com/api28.php?name=pc28&type=json";
-	 public  static String JIANADA_URL =   "http://api.dabai28.com/api28.php?name=jnd28&type=json";
-	 
 	 @Resource
 	AddData addData;
 	  /**
 	     * 获取北京/加拿大数据任务
 	 * @throws Exception 
 	     */
-	    @Scheduled(fixedDelay=ONE_Minute)
+	    @Scheduled(fixedDelay=TEN_SECONDS)
 	    public void dataJob() throws Exception{
 	    	boolean bd = addData.addBeijingData();
+	    	//boolean bd = addData.addBeijingData2();
 	    	//System.out.println("北京"+bd);
 	    	boolean jd = addData.addJianadaData();
+	    	//boolean jd = addData.addJianadaData2();
 	    	//System.out.println("加拿大"+jd);
 	    }
 	    /**

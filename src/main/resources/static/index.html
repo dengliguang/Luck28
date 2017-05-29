@@ -339,13 +339,13 @@ padding:0 !important;
           // console.log($scope.time)
            if($scope.time!='获取数据中'){
            init($scope.nav);
-           $scope.timeSeconds=parseInt($scope.time/1000/60);
-           $scope.timeMinutes=parseInt($scope.time/1000%60);
+           $scope.timeSeconds=(Array(2).join(0)+parseInt($scope.time/1000/60)).slice(-2);
+           $scope.timeMinutes=(Array(2).join(0)+parseInt($scope.time/1000%60)).slice(-2);
            clearInterval($scope.timerInterval);
            $scope.timerInterval=setInterval(function(){
            $scope.time-=1000;
-           $scope.timeSeconds=parseInt($scope.time/1000/60);
-           $scope.timeMinutes=parseInt($scope.time/1000%60);
+           $scope.timeSeconds=(Array(2).join(0)+parseInt($scope.time/1000/60)).slice(-2);
+           $scope.timeMinutes=(Array(2).join(0)+parseInt($scope.time/1000%60)).slice(-2);
            //拉取数据
            if($scope.timeSeconds==0&&$scope.timeMinutes==0){
            $scope.changeNav($scope.nav);

@@ -68,8 +68,8 @@ public class JianadaController {
 		long oldDate=list.get(0).getTime().getTime();
 		long nowDate=new Date().getTime();
 		long costDate = (nowDate-oldDate);
-		//long surplusDate = 1000*60*4+1000*10-costDate;
-		long surplusDate = 1000*60*3+1000*30-costDate;
+		long surplusDate = 1000*60*3+1000*10-costDate;
+		//long surplusDate = 1000*60*3+1000*30-costDate;
 		Map<String,Object> map=new HashMap<String,Object>();
 		if(surplusDate<0){
 			map.put("time", "获取数据中");//
